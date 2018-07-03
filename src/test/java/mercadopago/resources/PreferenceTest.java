@@ -28,8 +28,7 @@ public class PreferenceTest {
     @BeforeClass
     public static void beforeTest() throws MPException {
         MercadoPago.SDK.cleanConfiguration();
-        MercadoPago.SDK.setClientId(System.getenv("CLIENT_ID"));
-        MercadoPago.SDK.setClientSecret(System.getenv("CLIENT_SECRET"));
+        MercadoPago.SDK.setConfiguration("credentials.properties");
     }
 
     @Test

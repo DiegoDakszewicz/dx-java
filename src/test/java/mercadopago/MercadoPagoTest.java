@@ -114,7 +114,7 @@ public class MercadoPagoTest {
 
         auxException = null;
         try {
-            MercadoPago.SDK.setConfiguration("mercadopago/data/testinvalidnull.properties");
+            MercadoPago.SDK.setConfiguration("testinvalidnull.properties");
         } catch (Exception exception) {
             auxException = exception;
         }
@@ -122,7 +122,7 @@ public class MercadoPagoTest {
 
         auxException = null;
         try {
-            MercadoPago.SDK.setConfiguration("mercadopago/data/testinvalidempty.properties");
+            MercadoPago.SDK.setConfiguration("testinvalidempty.properties");
         } catch (Exception exception) {
             auxException = exception;
         }
@@ -144,7 +144,7 @@ public class MercadoPagoTest {
     public void propertiesFileValidConfigurationTests() throws Exception {
         MercadoPago.SDK.cleanConfiguration();
         try {
-            MercadoPago.SDK.setConfiguration("mercadopago/data/testvalid.properties");
+            MercadoPago.SDK.setConfiguration("testvalid.properties");
         } catch (Exception e) {
             // Should raize an error trying to get a valid AccessToken
         } finally {

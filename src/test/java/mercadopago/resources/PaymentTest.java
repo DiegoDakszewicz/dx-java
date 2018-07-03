@@ -33,7 +33,7 @@ public class PaymentTest {
     @BeforeClass
     public static void beforeTest() throws MPException {
         MercadoPago.SDK.cleanConfiguration();
-        MercadoPago.SDK.setAccessToken(System.getenv("ACCESS_TOKEN_TEST_OK"));
+        MercadoPago.SDK.setConfiguration("credentials.properties");
     }
 
     @Test
