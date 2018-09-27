@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.mercadopago</groupId>
+    <groupId>ar.com.nubing.mercadopago</groupId>
     <artifactId>dx-java</artifactId>
-    <version>1.0.23</version>
+    <version>1.0.12-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Mercadopago SDK</name>
     <description>Mercadopago SDK</description>
-    <url>https://github.com/mercadopago/dx-java</url>
+    <url>https://github.com/DiegoDakszewicz/dx-java</url>
 
     <licenses>
         <license>
@@ -47,8 +47,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
 
@@ -66,19 +66,20 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-gpg-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>sign-artifacts</id>-->
+                        <!--<phase>verify</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>sign</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -122,42 +123,44 @@
                     <execution>
                         <id>deploy</id>
                         <phase>deploy</phase>
-                        <goals><goal>deploy</goal></goals>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.7</version>
-            <extensions>true</extensions>
-            <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-            </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.sonatype.plugins</groupId>-->
+                <!--<artifactId>nexus-staging-maven-plugin</artifactId>-->
+                <!--<version>1.6.7</version>-->
+                <!--<extensions>true</extensions>-->
+                <!--<configuration>-->
+                    <!--<serverId>ossrh</serverId>-->
+                    <!--<nexusUrl>https://oss.sonatype.org/</nexusUrl>-->
+                    <!--<autoReleaseAfterClose>true</autoReleaseAfterClose>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
 
         </plugins>
     </build>
 
     <scm>
-	<url>https://github.com/mercadopago/dx-java.git</url>
-        <connection>scm:git:git@github.com:mercadopago/dx-java.git</connection>
-        <developerConnection>scm:git:git@github.com:mercadopago/dx-java.git</developerConnection>
+	<url>https://github.com/DiegoDakszewicz/dx-java.git</url>
+        <connection>scm:git:git@github.com:DiegoDakszewicz/dx-java.git</connection>
+        <developerConnection>scm:git:git@github.com:DiegoDakszewicz/dx-java.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
-    <distributionManagement>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-        </repository>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+    <!--<distributionManagement>-->
+        <!--<repository>-->
+            <!--<id>ossrh</id>-->
+            <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>-->
+        <!--</repository>-->
+        <!--<snapshotRepository>-->
+            <!--<id>ossrh</id>-->
+            <!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+        <!--</snapshotRepository>-->
+    <!--</distributionManagement>-->
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -191,7 +194,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.2</version>
+            <version>4.5.6</version>
         </dependency>
 
         <dependency>
@@ -216,16 +219,29 @@
         </dependency>
     </dependencies>
 
-    <!--
+    <!--<distributionManagement>-->
+        <!--<repository>-->
+            <!--<id>repo</id>-->
+            <!--<url>https://github.com/DiegoDakszewicz/dx-java/raw/master/releases</url>-->
+        <!--</repository>-->
+        <!--<snapshotRepository>-->
+            <!--<id>snapshot-repo</id>-->
+            <!--<url>https://github.com/DiegoDakszewicz/dx-java/raw/master/snapshots</url>-->
+        <!--</snapshotRepository>-->
+    <!--</distributionManagement>-->
+
     <distributionManagement>
         <repository>
-            <id>repo</id>
-            <url>https://github.com/mercadopago/dx-java/raw/master/releases</url>
+            <id>internal</id>
+            <name>nubing-internal</name>
+            <url>http://juicebox:8080/archiva/repository/internal/</url>
         </repository>
+
         <snapshotRepository>
-            <id>snapshot-repo</id>
-            <url>https://github.com/mercadopago/dx-java/raw/master/snapshots</url>
+            <id>snapshots</id>
+            <name>nubing-snapshot</name>
+            <url>http://juicebox:8080/archiva/repository/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-    -->
+
 </project>
