@@ -264,7 +264,8 @@ public class PaymentTest {
 
     @Test
     public void stage6_paymentFindByIdTest() throws MPException {
-        Payment payment = Payment.findById(lastPayment.getId(), MPBase.WITHOUT_CACHE);
+        Payment payment  = new Payment();
+        payment = payment.findById(lastPayment.getId(), MPBase.WITHOUT_CACHE);
         assertEquals(200, payment.getLastApiResponse().getStatusCode());
         assertEquals(lastPayment.getId(), payment.getId());
 

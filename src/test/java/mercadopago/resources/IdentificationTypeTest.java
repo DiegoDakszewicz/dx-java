@@ -28,14 +28,15 @@ public class IdentificationTypeTest {
 
     @Test
     public void identificationTypesLoadTest() throws MPException {
-        MPResourceArray resourceArray = IdentificationType.all(MPBase.WITH_CACHE);
+        IdentificationType it = new IdentificationType();
+        MPResourceArray resourceArray = it.all(MPBase.WITH_CACHE);
         assertEquals(200, resourceArray.getLastApiResponse().getStatusCode());
         assertFalse(resourceArray.getLastApiResponse().fromCache);
         assertEquals(5, resourceArray.size());
         IdentificationType identificationType = resourceArray.getById("DNI");
         assertEquals("DNI", identificationType.getName());
 
-        resourceArray = IdentificationType.all(MPBase.WITH_CACHE);
+        resourceArray = it.all(MPBase.WITH_CACHE);
         assertEquals(200, resourceArray.getLastApiResponse().getStatusCode());
         assertTrue(resourceArray.getLastApiResponse().fromCache);
 

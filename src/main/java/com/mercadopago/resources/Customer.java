@@ -170,16 +170,16 @@ public class Customer extends MPBase {
 
 
     @GET(path="/v1/customers/search")
-    public static MPResourceArray search(HashMap<String, String> filters, Boolean useCache) throws MPException {
-        return Customer.processMethodBulk(Customer.class, "search", filters, useCache);
+    public  MPResourceArray search(HashMap<String, String> filters, Boolean useCache) throws MPException {
+        return processMethodBulk(Customer.class, "search", filters, useCache);
     }
 
-    public static Customer findById(String id) throws MPException {
+    public  Customer findById(String id) throws MPException {
         return findById(id, WITHOUT_CACHE);
     }
 
     @GET(path="/v1/customers/:id")
-    public static Customer findById(String id, Boolean useCache) throws MPException {
+    public  Customer findById(String id, Boolean useCache) throws MPException {
         return Customer.processMethod(Customer.class, "findById", id, useCache);
     }
 

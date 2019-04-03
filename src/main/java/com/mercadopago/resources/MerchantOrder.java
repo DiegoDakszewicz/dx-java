@@ -213,12 +213,12 @@ public class MerchantOrder extends MPBase {
     }
 
 
-    public static MerchantOrder findById(String id) throws MPException {
+    public  MerchantOrder findById(String id) throws MPException {
         return findById(id, WITHOUT_CACHE);
     }
 
     @GET(path="/merchant_orders/:id")
-    public static MerchantOrder findById(String id, Boolean useCache) throws MPException {
+    public  MerchantOrder findById(String id, Boolean useCache) throws MPException {
         return MerchantOrder.processMethod(MerchantOrder.class, "findById", id, useCache);
     }
 

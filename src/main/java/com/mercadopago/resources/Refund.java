@@ -71,12 +71,12 @@ public class Refund extends MPBase {
         this.uniqueSequenceNumber = uniqueSequenceNumber;
     }
 
-    public static MPResourceArray all(String paymentId) throws MPException {
+    public  MPResourceArray all(String paymentId) throws MPException {
         return all(paymentId, WITHOUT_CACHE);
     }
 
     @GET(path="/v1/payments/:payment_id/refunds")
-    public static MPResourceArray all(String paymentId, Boolean useCache) throws MPException {
+    public  MPResourceArray all(String paymentId, Boolean useCache) throws MPException {
         return Refund.processMethodBulk(Refund.class, "all", paymentId, useCache);
     }
 

@@ -137,7 +137,8 @@ public class MerchantOrderTest {
 
     @Test
     public void merchantOrderLoadTest() throws MPException {
-        MerchantOrder merchantOrder = MerchantOrder.findById("433287094", MPBase.WITH_CACHE);
+        MerchantOrder merchantOrder= new MerchantOrder();
+        merchantOrder = merchantOrder.findById("433287094", MPBase.WITH_CACHE);
         assertEquals(200, merchantOrder.getLastApiResponse().getStatusCode());
         assertEquals("433287094", merchantOrder.getId());
         assertEquals("236939761-d2d4c87c-3aa0-4015-9089-2047817399e4", merchantOrder.getPreferenceId());
@@ -146,7 +147,7 @@ public class MerchantOrderTest {
         assertEquals(0.01f, merchantOrder.getTotalAmount(), 0f);
         assertFalse(merchantOrder.getLastApiResponse().fromCache);
 
-        merchantOrder = MerchantOrder.findById("433287094", MPBase.WITH_CACHE);
+        merchantOrder = merchantOrder.findById("433287094", MPBase.WITH_CACHE);
         assertTrue(merchantOrder.getLastApiResponse().fromCache);
     }
 

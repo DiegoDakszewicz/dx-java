@@ -66,7 +66,8 @@ public class CustomerTest {
     @Test
     public void stage2_GetCustomerTest() throws MPException {
 
-        Customer customer = Customer.findById(createdCustomer.getId());
+        Customer customer = new Customer();
+        customer = customer.findById(createdCustomer.getId());
 
         assertEquals(200, customer.getLastApiResponse().getStatusCode());
         assertNotNull(customer.getId());
@@ -76,10 +77,11 @@ public class CustomerTest {
     @Test
     public void stage3_RemoveCustomerTest() throws MPException {
 
-        Customer customer = Customer.findById(createdCustomer.getId());
+        Customer customer = new Customer();
+        customer = customer.findById(createdCustomer.getId());
         customer.delete();
 
-        Customer customer_removed = Customer.findById(createdCustomer.getId());
+        Customer customer_removed = customer.findById(createdCustomer.getId());
         assertEquals(404, customer_removed.getLastApiResponse().getStatusCode());
 
     }

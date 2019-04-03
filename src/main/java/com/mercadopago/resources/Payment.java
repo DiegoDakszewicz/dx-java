@@ -12,15 +12,15 @@ import com.mercadopago.core.annotations.validation.Size;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.datastructures.payment.*;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Mercado Pago SDK
  * This resource allows you to create, modify or read payments
- *
+ * <p>
  * Created by Eduardo Paoletta on 12/2/16.
  */
 @Idempotent
@@ -34,6 +34,7 @@ public class Payment extends MPBase {
     private Integer collectorId = null;
     private String authorizationCode = null;
     private OperationType operationType = null;
+
     public enum OperationType {
         regular_payment,
         money_transfer,
@@ -43,6 +44,7 @@ public class Payment extends MPBase {
         cellphone_recharge,
         pos_payment
     }
+
     private Payer payer = null;
     private Boolean binaryMode = null;
     private Boolean liveMode = null;
@@ -50,7 +52,9 @@ public class Payment extends MPBase {
     private String externalReference = null;
     private String description = null;
     private JsonObject metadata = null;
-    @Size(min=3, max=3) private CurrencyId currencyId = null;
+    @Size(min = 3, max = 3)
+    private CurrencyId currencyId = null;
+
     public enum CurrencyId {
         ARS,
         BRL,
@@ -62,6 +66,7 @@ public class Payment extends MPBase {
         UYU,
         USD
     }
+
     private Float transactionAmount = null;
     private Float transactionAmountRefunded = null;
     private Float couponAmount = null;
@@ -72,6 +77,7 @@ public class Payment extends MPBase {
     private Integer differentialPricingId = null;
     private Float applicationFee = null;
     private Status status = null;
+
     public enum Status {
         pending,
         approved,
@@ -83,6 +89,7 @@ public class Payment extends MPBase {
         refunded,
         charged_back
     }
+
     private String statusDetail = null;
     private Boolean capture = null;
     private Boolean captured = null;
@@ -90,6 +97,7 @@ public class Payment extends MPBase {
     private String paymentMethodId = null;
     private String issuerId = null;
     private PaymentTypeId paymentTypeId = null;
+
     public enum PaymentTypeId {
         account_money,
         ticket,
@@ -99,14 +107,18 @@ public class Payment extends MPBase {
         debit_card,
         prepaid_card
     }
+
     private String token = null;
     private Card card = null;
     private String statementDescriptor = null;
-    @Numeric(min=1, fractionDigits=0) private Integer installments = null;
+    @Numeric(min = 1, fractionDigits = 0)
+    private Integer installments = null;
     private String notificationUrl = null;
     private ArrayList<Refund> refunds = null;
     private AdditionalInfo additionalInfo = null;
     private String callbackUrl = null;
+    private Integer sponsorId;
+    private String processingMode;
 
 
     public String getId() {
@@ -346,6 +358,24 @@ public class Payment extends MPBase {
         return this;
     }
 
+    public Integer getSponsorId() {
+        return sponsorId;
+    }
+
+    public Payment setSponsorId(Integer sponsorId) {
+        this.sponsorId = sponsorId;
+        return this;
+    }
+
+    public String getProcessingMode() {
+        return processingMode;
+    }
+
+    public Payment setProcessingMode(String processingMode) {
+        this.processingMode = processingMode;
+        return this;
+    }
+
     public ArrayList<Refund> getRefunds() {
         return refunds;
     }
@@ -363,26 +393,29 @@ public class Payment extends MPBase {
         this.callbackUrl = callbackUrl;
     }
 
-    public static Payment findById(String id) throws MPException {
+    public Payment findById(String id) throws MPException {
         return findById(id, WITHOUT_CACHE);
     }
 
-    @GET(path="/v1/payments/search")
-    public static MPResourceArray search(HashMap<String, String> filters, Boolean useCache) throws MPException {
+    @GET(path = "/v1/payments/search")
+    public MPResourceArray search(HashMap<String, String> filters, Boolean useCache) throws MPException {
+        for (Map.Entry<String, String> entry : filters.entrySet()) {
+            this.addQueryParam(entry.getKey(),entry.getValue());
+        }
         return Payment.processMethodBulk(Payment.class, "search", filters, useCache);
     }
 
-    @GET(path="/v1/payments/:id")
-    public static Payment findById(String id, Boolean useCache) throws MPException {
+    @GET(path = "/v1/payments/:id")
+    public Payment findById(String id, Boolean useCache) throws MPException {
         return Payment.processMethod(Payment.class, "findById", id, useCache);
     }
 
-    @POST(path="/v1/payments")
+    @POST(path = "/v1/payments")
     public Payment save() throws MPException {
         return super.processMethod("save", WITHOUT_CACHE);
     }
 
-    @PUT(path="/v1/payments/:id")
+    @PUT(path = "/v1/payments/:id")
     public Payment update() throws MPException {
         return super.processMethod("update", WITHOUT_CACHE);
     }
@@ -395,7 +428,7 @@ public class Payment extends MPBase {
         // If refund has been successfully created then update the instance values
 
         if (refund.getId() != null) {
-            Payment payment = Payment.findById(this.getId()); // Get updated payment instance
+            Payment payment = findById(this.getId()); // Get updated payment instance
             this.status = payment.getStatus();
             this.refunds = payment.getRefunds();
             this.transactionAmountRefunded = payment.getTransactionAmountRefunded();

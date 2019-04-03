@@ -8,7 +8,7 @@ import com.mercadopago.exceptions.MPException;
 /**
  * Mercado Pago SDK
  * Identification Types Array class
- *
+ * <p>
  * Created by Eduardo Paoletta on 12/15/16.
  */
 public class IdentificationType extends MPBase {
@@ -41,12 +41,12 @@ public class IdentificationType extends MPBase {
     }
 
 
-    public static MPResourceArray all() throws MPException {
+    public MPResourceArray all() throws MPException {
         return all(WITHOUT_CACHE);
     }
 
-    @GET(path="/v1/identification_types")
-    public static MPResourceArray all(Boolean useCache) throws MPException {
+    @GET(path = "/v1/identification_types")
+    public MPResourceArray all(Boolean useCache) throws MPException {
         return IdentificationType.processMethodBulk(IdentificationType.class, "all", useCache);
     }
 

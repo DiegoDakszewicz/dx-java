@@ -9,28 +9,29 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
-import com.mercadopago.*;
+import com.mercadopago.MercadoPago;
 import com.mercadopago.core.annotations.idempotent.Idempotent;
-import com.mercadopago.core.annotations.rest.*;
 import com.mercadopago.core.annotations.rest.*;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.net.HttpMethod;
 import com.mercadopago.net.MPRestClient;
-import com.mercadopago.resources.Refund;
+import org.apache.commons.io.Charsets;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.net.URLEncoder;
 import java.util.*;
 
 
 /**
  * Mercado Pago MercadoPago
  * Core MPBase class
- *
+ * <p>
  * Created by Eduardo Paoletta on 11/4/16.
  */
 public abstract class MPBase {
@@ -48,6 +49,10 @@ public abstract class MPBase {
     protected transient MPApiResponse lastApiResponse;
 
     private transient String marketplaceAccessToken = null;
+
+    private transient String accessToken = null;
+
+    private transient Map<String, String> queryParams = new HashMap<>();
 
     public MPBase() {
         if (admitIdempotenceKey()) {
@@ -73,6 +78,7 @@ public abstract class MPBase {
 
     /**
      * Checks if the class is marked as an idempotent resource
+     *
      * @return a boolean
      */
     private boolean admitIdempotenceKey() {
@@ -82,26 +88,26 @@ public abstract class MPBase {
     /**
      * Process the method to call the api, usually used for create, update and delete methods
      *
-     * @param methodName        a String with the decorated method to be processed
-     * @param useCache          a Boolean flag that indicates if the cache must be used
-     * @return                  a resourse obj fill with the api response
+     * @param methodName a String with the decorated method to be processed
+     * @param useCache   a Boolean flag that indicates if the cache must be used
+     * @return a resourse obj fill with the api response
      * @throws MPException
      */
     protected <T extends MPBase> T processMethod(String methodName, Boolean useCache) throws MPException {
         HashMap<String, String> mapParams = null;
-        T resource = processMethod(this.getClass(), (T)this, methodName, mapParams, useCache);
+        T resource = processMethod(this.getClass(), (T) this, methodName, mapParams, useCache);
         fillResource(resource, this);
-        return (T)this;
+        return (T) this;
     }
 
     /**
      * Process the method to call the api, usually used for load methods
      *
-     * @param clazz             a MPBase extended class
-     * @param methodName        a String with the decorated method to be processed
-     * @param param1            a String with the arg passed in the call of the method
-     * @param useCache          a Boolean flag that indicates if the cache must be used
-     * @return                  a resourse obj fill with the api response
+     * @param clazz      a MPBase extended class
+     * @param methodName a String with the decorated method to be processed
+     * @param param1     a String with the arg passed in the call of the method
+     * @param useCache   a Boolean flag that indicates if the cache must be used
+     * @return a resourse obj fill with the api response
      * @throws MPException
      */
     protected static <T extends MPBase> T processMethod(Class clazz, String methodName, String param1, Boolean useCache) throws MPException {
@@ -114,12 +120,12 @@ public abstract class MPBase {
     /**
      * Process the method to call the api, usually used for load methods
      *
-     * @param clazz             a MPBase extended class
-     * @param methodName        a String with the decorated method to be processed
-     * @param param1            a String with the arg passed in the call of the method
-     * @param param2            a String with the arg passed in the call of the method
-     * @param useCache          a Boolean flag that indicates if the cache must be used
-     * @return                  a resourse obj fill with the api response
+     * @param clazz      a MPBase extended class
+     * @param methodName a String with the decorated method to be processed
+     * @param param1     a String with the arg passed in the call of the method
+     * @param param2     a String with the arg passed in the call of the method
+     * @param useCache   a Boolean flag that indicates if the cache must be used
+     * @return a resourse obj fill with the api response
      * @throws MPException
      */
     protected static <T extends MPBase> T processMethod(Class clazz, String methodName, String param1, String param2, Boolean useCache) throws MPException {
@@ -133,12 +139,12 @@ public abstract class MPBase {
     /**
      * Process the method to call the api
      *
-     * @param clazz             a MPBase extended class
-     * @param resource          an instance of the MPBase extended class, if its called from a non static method
-     * @param methodName        a String with the decorated method to be processed
-     * @param mapParams         a hashmap with the args passed in the call of the method
-     * @param useCache          a Boolean flag that indicates if the cache must be used
-     * @return                  a resourse obj fill with the api response
+     * @param clazz      a MPBase extended class
+     * @param resource   an instance of the MPBase extended class, if its called from a non static method
+     * @param methodName a String with the decorated method to be processed
+     * @param mapParams  a hashmap with the args passed in the call of the method
+     * @param useCache   a Boolean flag that indicates if the cache must be used
+     * @return a resourse obj fill with the api response
      * @throws MPException
      */
     protected static <T extends MPBase> T processMethod(Class clazz, T resource, String methodName, HashMap<String, String> mapParams, Boolean useCache) throws MPException {
@@ -157,7 +163,7 @@ public abstract class MPBase {
 
         AnnotatedElement annotatedMethod = getAnnotatedMethod(clazz, methodName);
         HashMap<String, Object> hashAnnotation = getRestInformation(annotatedMethod);
-        HttpMethod httpMethod = (HttpMethod)hashAnnotation.get("method");
+        HttpMethod httpMethod = (HttpMethod) hashAnnotation.get("method");
         String path = parsePath(hashAnnotation.get("path").toString(), mapParams, resource);
         int retries = Integer.valueOf(hashAnnotation.get("retries").toString());
         int connectionTimeout = Integer.valueOf(hashAnnotation.get("connectionTimeout").toString());
@@ -195,9 +201,9 @@ public abstract class MPBase {
     /**
      * Process method to call the api, usually used for loadAll and search methods
      *
-     * @param clazz                 a MPBase extended class
-     * @param methodName            a String with the decorated method to be processed
-     * @param useCache              a Boolean flag that indicates if the cache must be used
+     * @param clazz      a MPBase extended class
+     * @param methodName a String with the decorated method to be processed
+     * @param useCache   a Boolean flag that indicates if the cache must be used
      * @return
      * @throws MPException
      */
@@ -210,10 +216,10 @@ public abstract class MPBase {
     /**
      * Process method to call the api, usually used for loadAll and search methods
      *
-     * @param clazz                 a MPBase extended class
-     * @param methodName            a String with the decorated method to be processed
-     * @param param1                a String with the arg passed in the call of the method
-     * @param useCache              a Boolean flag that indicates if the cache must be used
+     * @param clazz      a MPBase extended class
+     * @param methodName a String with the decorated method to be processed
+     * @param param1     a String with the arg passed in the call of the method
+     * @param useCache   a Boolean flag that indicates if the cache must be used
      * @return
      * @throws MPException
      */
@@ -226,11 +232,11 @@ public abstract class MPBase {
     /**
      * Process method to call the api, usually used for loadAll and search methods
      *
-     * @param clazz                 a MPBase extended class
-     * @param methodName            a String with the decorated method to be processed
-     * @param param1                a String with the arg passed in the call of the method
-     * @param param2                a String with the arg passed in the call of the method
-     * @param useCache              a Boolean flag that indicates if the cache must be used
+     * @param clazz      a MPBase extended class
+     * @param methodName a String with the decorated method to be processed
+     * @param param1     a String with the arg passed in the call of the method
+     * @param param2     a String with the arg passed in the call of the method
+     * @param useCache   a Boolean flag that indicates if the cache must be used
      * @return
      * @throws MPException
      */
@@ -244,11 +250,11 @@ public abstract class MPBase {
     /**
      * Process the method to call the api
      *
-     * @param clazz             a MPBase extended class
-     * @param methodName        a String with the decorated method to be processed
-     * @param mapParams         a hashmap with the args passed in the call of the method
-     * @param useCache          a Boolean flag that indicates if the cache must be used
-     * @return                  a resourse obj fill with the api response
+     * @param clazz      a MPBase extended class
+     * @param methodName a String with the decorated method to be processed
+     * @param mapParams  a hashmap with the args passed in the call of the method
+     * @param useCache   a Boolean flag that indicates if the cache must be used
+     * @return a resourse obj fill with the api response
      * @throws MPException
      */
     protected static MPResourceArray processMethodBulk(Class clazz, String methodName, HashMap<String, String> mapParams, Boolean useCache) throws MPException {
@@ -260,7 +266,7 @@ public abstract class MPBase {
 
         AnnotatedElement annotatedMethod = getAnnotatedMethod(clazz, methodName);
         HashMap<String, Object> hashAnnotation = getRestInformation(annotatedMethod);
-        HttpMethod httpMethod = (HttpMethod)hashAnnotation.get("method");
+        HttpMethod httpMethod = (HttpMethod) hashAnnotation.get("method");
 
         String path = parsePath(hashAnnotation.get("path").toString(), mapParams, null);
 
@@ -289,15 +295,15 @@ public abstract class MPBase {
     /**
      * Calls the api and returns an MPApiResponse.
      *
-     * @param httpMethod                    the http method to be processed
-     * @param path                          a String with the full url of the endpoint
-     * @param payloadType                   a PayloadType obj
-     * @param payload                       a JsonObject with the content of the payload
-     * @param colHeaders                    a collection of headers
-     * @param retries                       int with nrs of retries
-     * @param connectionTimeout             int with the connection timeout
-     * @param socketTimeout                 int with the socket timeout
-     * @param useCache                      a Boolean flag that indicates if the cache must be used
+     * @param httpMethod        the http method to be processed
+     * @param path              a String with the full url of the endpoint
+     * @param payloadType       a PayloadType obj
+     * @param payload           a JsonObject with the content of the payload
+     * @param colHeaders        a collection of headers
+     * @param retries           int with nrs of retries
+     * @param connectionTimeout int with the connection timeout
+     * @param socketTimeout     int with the socket timeout
+     * @param useCache          a Boolean flag that indicates if the cache must be used
      * @return
      * @throws MPException
      */
@@ -343,7 +349,7 @@ public abstract class MPBase {
      * It fills all the attributes members of the Resource obj.
      * Used when a Get or a Put request is called
      *
-     * @param response              Response of the request
+     * @param response Response of the request
      * @throws MPException
      */
     protected static <T extends MPBase> T fillResourceWithResponseData(T resource, MPApiResponse response) throws MPException {
@@ -360,8 +366,8 @@ public abstract class MPBase {
     /**
      * It fills an array with the resource objects from the api response
      *
-     * @param clazz                 a MPBase extended class
-     * @param response              MPApiResponse obj.
+     * @param clazz    a MPBase extended class
+     * @param response MPApiResponse obj.
      * @param <T>
      * @return
      * @throws MPException
@@ -384,8 +390,8 @@ public abstract class MPBase {
     /**
      * Copies the atributes from an obj to a destination obj
      *
-     * @param sourceResource                source resource obj
-     * @param destinationResource           destination resource obj
+     * @param sourceResource      source resource obj
+     * @param destinationResource destination resource obj
      * @param <T>
      * @return
      * @throws MPException
@@ -430,7 +436,7 @@ public abstract class MPBase {
     /**
      * Returns standard headers for all the requests
      *
-     * @return              a collection with headers objects
+     * @return a collection with headers objects
      */
     private static Collection<Header> getStandardHeaders() {
         Collection<Header> colHeaders = new Vector<Header>();
@@ -442,9 +448,10 @@ public abstract class MPBase {
 
     /**
      * Evaluates the path of the resourse and use the args or the attributes members of the instance to complete it.
-     * @param path              a String with the path as stated in the declaration of the method caller
-     * @param mapParams         a HashMap with the args passed in the call of the method
-     * @return                  a String with the final path to call the API
+     *
+     * @param path      a String with the path as stated in the declaration of the method caller
+     * @param mapParams a HashMap with the args passed in the call of the method
+     * @return a String with the final path to call the API
      * @throws MPException
      */
     private static <T extends MPBase> String parsePath(String path, HashMap<String, String> mapParams, T resource) throws MPException {
@@ -512,17 +519,19 @@ public abstract class MPBase {
         }
 
 
-
         // URL
         processedPath.insert(0, MercadoPago.SDK.getBaseUrl());
 
 
         // Token
         String accessToken = null;
-        if (resource != null){
-            accessToken = resource.getMarketplaceAccessToken();
+        if (resource != null) {
+            accessToken = resource.getAccessToken();
             if (StringUtils.isEmpty(accessToken)) {
-                accessToken = MercadoPago.SDK.getAccessToken();
+                accessToken = resource.getMarketplaceAccessToken();
+                if (StringUtils.isEmpty(accessToken)) {
+                    accessToken = MercadoPago.SDK.getAccessToken();
+                }
             }
         } else {
             accessToken = MercadoPago.SDK.getAccessToken();
@@ -531,6 +540,16 @@ public abstract class MPBase {
         processedPath
                 .append("?access_token=")
                 .append(accessToken);
+
+        if (resource != null) {
+            for (Map.Entry<String, String> entry : resource.getQueryParams().entrySet()) {
+                try {
+                    processedPath.append("&" + entry.getKey() + "=").append(URLEncoder.encode(entry.getValue(), Charsets.UTF_8.name()));
+                } catch (UnsupportedEncodingException e) {
+                    throw new MPException(e);
+                }
+            }
+        }
 
         if (!MPCoreUtils.validateUrl(processedPath.toString())) {
             throw new MPException("Processed URL not valid: " + processedPath.toString());
@@ -543,7 +562,7 @@ public abstract class MPBase {
      * POST gets the full object in a JSON object.
      * PUT gets only the differences with the last known state of the object.
      *
-     * @return                  a JSON Object with the attributes members of the instance. Null for GET and DELETE methods
+     * @return a JSON Object with the attributes members of the instance. Null for GET and DELETE methods
      */
     private static <T extends MPBase> JsonObject generatePayload(HttpMethod httpMethod, T resource) {
         JsonObject payload = null;
@@ -554,14 +573,14 @@ public abstract class MPBase {
 
             JsonObject actualJson = MPCoreUtils.getJsonFromResource(resource);
 
-            Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+            Type mapType = new TypeToken<Map<String, Object>>() {
+            }.getType();
             Gson gson = new Gson();
             Map<String, Object> oldMap = gson.fromJson(resource._lastKnownJson, mapType);
             Map<String, Object> newMap = gson.fromJson(actualJson, mapType);
             MapDifference<String, Object> mapDifferences = Maps.difference(oldMap, newMap);
 
             payload = new JsonObject();
-
 
 
             for (Map.Entry<String, MapDifference.ValueDifference<Object>> entry : mapDifferences.entriesDiffering().entrySet()) {
@@ -571,9 +590,9 @@ public abstract class MPBase {
                     payload.add(entry.getKey(), jsonObject);
                 } else {
                     if (entry.getValue().rightValue() instanceof Boolean) {
-                        payload.addProperty(entry.getKey(), (Boolean)entry.getValue().rightValue());
+                        payload.addProperty(entry.getKey(), (Boolean) entry.getValue().rightValue());
                     } else if (entry.getValue().rightValue() instanceof Number) {
-                        payload.addProperty(entry.getKey(), (Number)entry.getValue().rightValue());
+                        payload.addProperty(entry.getKey(), (Number) entry.getValue().rightValue());
                     } else {
                         payload.addProperty(entry.getKey(), entry.getValue().rightValue().toString());
                     }
@@ -583,9 +602,9 @@ public abstract class MPBase {
             for (Map.Entry<String, Object> entry : mapDifferences.entriesOnlyOnRight().entrySet()) {
 
                 if (entry.getValue() instanceof Boolean) {
-                    payload.addProperty(entry.getKey(), (Boolean)entry.getValue());
+                    payload.addProperty(entry.getKey(), (Boolean) entry.getValue());
                 } else if (entry.getValue() instanceof Number) {
-                    payload.addProperty(entry.getKey(), (Number)entry.getValue());
+                    payload.addProperty(entry.getKey(), (Number) entry.getValue());
                 } else {
                     payload.addProperty(entry.getKey(), entry.getValue().toString());
                 }
@@ -598,11 +617,11 @@ public abstract class MPBase {
      * Iterates the annotations of the entity method implementation, it validates that only one method annotation
      * is used in the entity implementation method.
      *
-     * @param element           The annotated method of the entity
-     * @return                  a hashmap with keys 'method' and 'path'
+     * @param element The annotated method of the entity
+     * @return a hashmap with keys 'method' and 'path'
      * @throws MPException
      */
-    private static HashMap<String, Object> getRestInformation(AnnotatedElement element) throws MPException{
+    private static HashMap<String, Object> getRestInformation(AnnotatedElement element) throws MPException {
         if (element.getAnnotations().length == 0) {
             throw new MPException("No rest method found");
         }
@@ -672,14 +691,14 @@ public abstract class MPBase {
     /**
      * Fills a hashmap with the rest method and the path to call the api. It validates that no other method/path is filled in the hash
      *
-     * @param hashAnnotation        a HashMap object that will contain the method and path
-     * @param method                a String with the method
-     * @param path                  a String with the path
-     * @param payloadType           a PayloadType enum
-     * @param retries               int with the retries for the api request
-     * @param connectionTimeout     int with the connection timeout for the api request expressed in milliseconds
-     * @param socketTimeout         int with the socket timeout for the api request expressed in milliseconds
-     * @return                      the HashMap object that is received by param
+     * @param hashAnnotation    a HashMap object that will contain the method and path
+     * @param method            a String with the method
+     * @param path              a String with the path
+     * @param payloadType       a PayloadType enum
+     * @param retries           int with the retries for the api request
+     * @param connectionTimeout int with the connection timeout for the api request expressed in milliseconds
+     * @param socketTimeout     int with the socket timeout for the api request expressed in milliseconds
+     * @return the HashMap object that is received by param
      * @throws MPException
      */
     private static HashMap<String, Object> fillHashAnnotations(
@@ -706,8 +725,8 @@ public abstract class MPBase {
     /**
      * Iterates over the methods of a class and returns the one matching the method name passed
      *
-     * @param methodName            a String with the name of the method to be recuperated
-     * @return                      a AnnotatedMethod that match the method name passed
+     * @param methodName a String with the name of the method to be recuperated
+     * @return a AnnotatedMethod that match the method name passed
      * @throws MPException
      */
     private static AnnotatedElement getAnnotatedMethod(Class clazz, String methodName) throws MPException {
@@ -727,4 +746,21 @@ public abstract class MPBase {
     public void setMarketplaceAccessToken(String marketplaceAccessToken) {
         this.marketplaceAccessToken = marketplaceAccessToken;
     }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public void addQueryParam(String key, String value) {
+        this.queryParams.put(key, value);
+    }
+
+    public Map<String, String> getQueryParams() {
+        return queryParams;
+    }
+
 }

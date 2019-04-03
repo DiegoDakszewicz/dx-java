@@ -266,12 +266,12 @@ public class Preference extends MPBase {
         return this;
     }
 
-    public static Preference findById(String id) throws MPException {
+    public  Preference findById(String id) throws MPException {
         return findById(id, WITHOUT_CACHE);
     }
 
     @GET(path="/checkout/preferences/:id")
-    public static Preference findById(String id, Boolean useCache) throws MPException {
+    public  Preference findById(String id, Boolean useCache) throws MPException {
         return Preference.processMethod(Preference.class, "findById", id, useCache);
     }
 

@@ -152,22 +152,22 @@ public class Card extends MPBase {
     }
 
 
-    public static MPResourceArray all(String customerId) throws MPException {
+    public MPResourceArray all(String customerId) throws MPException {
         return all(customerId, WITHOUT_CACHE);
     }
 
     @GET(path="/v1/customers/:customer_id/cards")
-    public static MPResourceArray all(String customerId, Boolean useCache) throws MPException {
+    public  MPResourceArray all(String customerId, Boolean useCache) throws MPException {
         return Card.processMethodBulk(Card.class, "all", customerId, useCache);
     }
 
-    public static Card findById(String customerId, String id) throws MPException {
+    public  Card findById(String customerId, String id) throws MPException {
         return findById(customerId, id, WITHOUT_CACHE);
     }
 
     @GET(path="/v1/customers/:customer_id/cards/:id")
-    public static Card findById(String customerId, String id, Boolean useCache) throws MPException {
-        return Card.processMethod(Card.class, "findById", customerId, id, useCache);
+    public Card findById(String customerId, String id, Boolean useCache) throws MPException {
+        return processMethod(Card.class, "findById", customerId, id, useCache);
     }
 
     @POST(path="/v1/customers/:customer_id/cards/")

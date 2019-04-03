@@ -207,14 +207,15 @@ public class PreferenceTest {
     @Ignore
     @Test
     public void preferenceLoadTest() throws MPException {
-        Preference preference = Preference.findById("236939761-d2d4c87c-3aa0-4015-9089-2047817399e4", MPBase.WITH_CACHE);
+        Preference preference = new Preference();
+        preference = preference.findById("236939761-d2d4c87c-3aa0-4015-9089-2047817399e4", MPBase.WITH_CACHE);
         assertEquals(200, preference.getLastApiResponse().getStatusCode());
         assertEquals("236939761-d2d4c87c-3aa0-4015-9089-2047817399e4", preference.getId());
         assertEquals(1, preference.getItems().size());
         assertEquals("regular_payment", preference.getOperationType().toString());
         assertFalse(preference.getLastApiResponse().fromCache);
 
-        preference = Preference.findById("236939761-d2d4c87c-3aa0-4015-9089-2047817399e4", MPBase.WITH_CACHE);
+        preference = preference.findById("236939761-d2d4c87c-3aa0-4015-9089-2047817399e4", MPBase.WITH_CACHE);
         assertTrue(preference.getLastApiResponse().fromCache);
     }
 
