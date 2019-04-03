@@ -307,7 +307,7 @@ public abstract class MPBase {
      * @return
      * @throws MPException
      */
-    private static MPApiResponse callApi(
+    protected static MPApiResponse callApi(
             HttpMethod httpMethod,
             String path,
             PayloadType payloadType,
@@ -454,7 +454,7 @@ public abstract class MPBase {
      * @return a String with the final path to call the API
      * @throws MPException
      */
-    private static <T extends MPBase> String parsePath(String path, HashMap<String, String> mapParams, T resource) throws MPException {
+    protected static <T extends MPBase> String parsePath(String path, HashMap<String, String> mapParams, T resource) throws MPException {
         StringBuilder processedPath = new StringBuilder();
         if (path.contains(":")) {
             int paramIterator = 0;

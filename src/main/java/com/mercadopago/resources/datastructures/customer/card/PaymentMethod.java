@@ -13,6 +13,7 @@ public class PaymentMethod {
     private String paymentTypeId = null;
     private String thumbnail = null;
     private String secureThumbnail = null;
+    private String status;
 
 
     public String getId() {

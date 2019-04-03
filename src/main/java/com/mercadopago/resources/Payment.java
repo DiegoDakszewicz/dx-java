@@ -10,6 +10,7 @@ import com.mercadopago.core.annotations.rest.PUT;
 import com.mercadopago.core.annotations.validation.Numeric;
 import com.mercadopago.core.annotations.validation.Size;
 import com.mercadopago.exceptions.MPException;
+import com.mercadopago.resources.datastructures.customer.card.PaymentMethod;
 import com.mercadopago.resources.datastructures.payment.*;
 
 import java.util.ArrayList;
@@ -400,14 +401,14 @@ public class Payment extends MPBase {
     @GET(path = "/v1/payments/search")
     public MPResourceArray search(HashMap<String, String> filters, Boolean useCache) throws MPException {
         for (Map.Entry<String, String> entry : filters.entrySet()) {
-            this.addQueryParam(entry.getKey(),entry.getValue());
+            this.addQueryParam(entry.getKey(), entry.getValue());
         }
-        return Payment.processMethodBulk(Payment.class, "search", filters, useCache);
+        return this.processMethodBulk(Payment.class, "search", filters, useCache);
     }
 
     @GET(path = "/v1/payments/:id")
     public Payment findById(String id, Boolean useCache) throws MPException {
-        return Payment.processMethod(Payment.class, "findById", id, useCache);
+        return this.processMethod(Payment.class, "findById", id, useCache);
     }
 
     @POST(path = "/v1/payments")
@@ -419,6 +420,12 @@ public class Payment extends MPBase {
     public Payment update() throws MPException {
         return super.processMethod("update", WITHOUT_CACHE);
     }
+
+    @GET(path = "/v1/payment_methods")
+    public MPResourceArray getPaymentMethods(Boolean useCache) throws MPException {
+        return this.processMethodBulk(PaymentMethod.class, "getPaymentsMethods", useCache);
+    }
+
 
     public Payment refund() throws MPException {
         // Create a refund

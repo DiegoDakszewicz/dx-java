@@ -1,12 +1,14 @@
 package com.mercadopago.resources;
 
+import com.google.gson.JsonObject;
+import com.mercadopago.MercadoPago;
+import com.mercadopago.core.MPApiResponse;
 import com.mercadopago.core.MPBase;
 import com.mercadopago.core.MPResourceArray;
-import com.mercadopago.core.annotations.rest.DELETE;
-import com.mercadopago.core.annotations.rest.GET;
-import com.mercadopago.core.annotations.rest.POST;
-import com.mercadopago.core.annotations.rest.PUT;
+import com.mercadopago.core.annotations.rest.*;
 import com.mercadopago.exceptions.MPException;
+import com.mercadopago.exceptions.MPRestException;
+import com.mercadopago.net.HttpMethod;
 import com.mercadopago.resources.datastructures.customer.card.Cardholder;
 import com.mercadopago.resources.datastructures.customer.card.Issuer;
 import com.mercadopago.resources.datastructures.customer.card.PaymentMethod;
@@ -17,7 +19,7 @@ import java.util.Date;
 /**
  * Mercado Pago MercadoPago
  * Retrieves information about a customer's cards.
- *
+ * <p>
  * Created by Eduardo Paoletta on 12/15/16.
  */
 public class Card extends MPBase {
@@ -156,34 +158,43 @@ public class Card extends MPBase {
         return all(customerId, WITHOUT_CACHE);
     }
 
-    @GET(path="/v1/customers/:customer_id/cards")
-    public  MPResourceArray all(String customerId, Boolean useCache) throws MPException {
+    @GET(path = "/v1/customers/:customer_id/cards")
+    public MPResourceArray all(String customerId, Boolean useCache) throws MPException {
         return Card.processMethodBulk(Card.class, "all", customerId, useCache);
     }
 
-    public  Card findById(String customerId, String id) throws MPException {
+    public Card findById(String customerId, String id) throws MPException {
         return findById(customerId, id, WITHOUT_CACHE);
     }
 
-    @GET(path="/v1/customers/:customer_id/cards/:id")
+    @GET(path = "/v1/customers/:customer_id/cards/:id")
     public Card findById(String customerId, String id, Boolean useCache) throws MPException {
         return processMethod(Card.class, "findById", customerId, id, useCache);
     }
 
-    @POST(path="/v1/customers/:customer_id/cards/")
+    @POST(path = "/v1/customers/:customer_id/cards/")
     public Card save() throws MPException {
         return super.processMethod("save", WITHOUT_CACHE);
     }
 
-    @PUT(path="/v1/customers/:customer_id/cards/:id")
+    @PUT(path = "/v1/customers/:customer_id/cards/:id")
     public Card update() throws MPException {
         return super.processMethod("update", WITHOUT_CACHE);
     }
 
-    @DELETE(path="/v1/customers/:customer_id/cards/:id")
+    @DELETE(path = "/v1/customers/:customer_id/cards/:id")
     public Card delete() throws MPException {
         return super.processMethod("delete", WITHOUT_CACHE);
     }
+
+    public String getCardToken(String cardId) throws MPException {
+        JsonObject payload = new JsonObject();
+        payload.addProperty("card_id", cardId);
+        String path = parsePath("/v1/card_tokens", null, null);
+        MPApiResponse response = callApi(HttpMethod.POST, path, PayloadType.JSON, payload, null, 0, 0, 0, false);
+        return response.getJsonElementResponse().getAsJsonObject().get("id").getAsString();
+    }
+
 
     public String getPaymentMethodId() {
         return paymentMethodId;
