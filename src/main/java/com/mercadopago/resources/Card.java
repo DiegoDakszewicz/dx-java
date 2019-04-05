@@ -160,7 +160,7 @@ public class Card extends MPBase {
 
     @GET(path = "/v1/customers/:customer_id/cards")
     public MPResourceArray all(String customerId, Boolean useCache) throws MPException {
-        return Card.processMethodBulk(Card.class, "all", customerId, useCache);
+        return this.processMethodBulk("all", customerId, useCache);
     }
 
     public Card findById(String customerId, String id) throws MPException {
@@ -169,7 +169,7 @@ public class Card extends MPBase {
 
     @GET(path = "/v1/customers/:customer_id/cards/:id")
     public Card findById(String customerId, String id, Boolean useCache) throws MPException {
-        return processMethod(Card.class, "findById", customerId, id, useCache);
+        return this.processMethod("findById", customerId, id, useCache);
     }
 
     @POST(path = "/v1/customers/:customer_id/cards/")
@@ -190,7 +190,7 @@ public class Card extends MPBase {
     public String getCardToken(String cardId) throws MPException {
         JsonObject payload = new JsonObject();
         payload.addProperty("card_id", cardId);
-        String path = parsePath("/v1/card_tokens", null, null);
+        String path = parsePath("/v1/card_tokens", null, this);
         MPApiResponse response = callApi(HttpMethod.POST, path, PayloadType.JSON, payload, null, 0, 0, 0, false);
         return response.getJsonElementResponse().getAsJsonObject().get("id").getAsString();
     }

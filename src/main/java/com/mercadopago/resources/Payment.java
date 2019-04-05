@@ -403,12 +403,12 @@ public class Payment extends MPBase {
         for (Map.Entry<String, String> entry : filters.entrySet()) {
             this.addQueryParam(entry.getKey(), entry.getValue());
         }
-        return this.processMethodBulk(Payment.class, "search", filters, useCache);
+        return this.processMethodBulk("search", filters, useCache);
     }
 
     @GET(path = "/v1/payments/:id")
     public Payment findById(String id, Boolean useCache) throws MPException {
-        return this.processMethod(Payment.class, "findById", id, useCache);
+        return this.processMethod("findById", id, useCache);
     }
 
     @POST(path = "/v1/payments")
@@ -421,21 +421,23 @@ public class Payment extends MPBase {
         return super.processMethod("update", WITHOUT_CACHE);
     }
 
-    @GET(path = "/v1/payment_methods")
     public MPResourceArray getPaymentMethods(Boolean useCache) throws MPException {
-        return this.processMethodBulk(PaymentMethod.class, "getPaymentsMethods", useCache);
+        PaymentMethod paymentMethod = new PaymentMethod();
+        paymentMethod.setAccessToken(this.getAccessToken());
+        return paymentMethod.all(useCache);
     }
 
 
     public Payment refund() throws MPException {
         // Create a refund
         Refund refund = new Refund();
+        refund.setAccessToken(this.getAccessToken());
         refund.setPaymentId(this.getId());
         refund.save();
         // If refund has been successfully created then update the instance values
 
         if (refund.getId() != null) {
-            Payment payment = findById(this.getId()); // Get updated payment instance
+            Payment payment = this.findById(this.getId()); // Get updated payment instance
             this.status = payment.getStatus();
             this.refunds = payment.getRefunds();
             this.transactionAmountRefunded = payment.getTransactionAmountRefunded();

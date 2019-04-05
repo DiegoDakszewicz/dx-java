@@ -171,7 +171,7 @@ public class Customer extends MPBase {
 
     @GET(path="/v1/customers/search")
     public  MPResourceArray search(HashMap<String, String> filters, Boolean useCache) throws MPException {
-        return processMethodBulk(Customer.class, "search", filters, useCache);
+        return this.processMethodBulk("search", filters, useCache);
     }
 
     public  Customer findById(String id) throws MPException {
@@ -180,7 +180,7 @@ public class Customer extends MPBase {
 
     @GET(path="/v1/customers/:id")
     public  Customer findById(String id, Boolean useCache) throws MPException {
-        return Customer.processMethod(Customer.class, "findById", id, useCache);
+        return this.processMethod("findById", id, useCache);
     }
 
     @POST(path="/v1/customers")

@@ -47,7 +47,7 @@ public class IdentificationType extends MPBase {
 
     @GET(path = "/v1/identification_types")
     public MPResourceArray all(Boolean useCache) throws MPException {
-        return IdentificationType.processMethodBulk(IdentificationType.class, "all", useCache);
+        return this.processMethodBulk(IdentificationType.class, "all", useCache);
     }
 
 }

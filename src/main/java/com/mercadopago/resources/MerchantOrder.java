@@ -219,7 +219,7 @@ public class MerchantOrder extends MPBase {
 
     @GET(path="/merchant_orders/:id")
     public  MerchantOrder findById(String id, Boolean useCache) throws MPException {
-        return MerchantOrder.processMethod(MerchantOrder.class, "findById", id, useCache);
+        return this.processMethod("findById", id, useCache);
     }
 
     @POST(path="/merchant_orders")

@@ -77,7 +77,7 @@ public class Refund extends MPBase {
 
     @GET(path="/v1/payments/:payment_id/refunds")
     public  MPResourceArray all(String paymentId, Boolean useCache) throws MPException {
-        return Refund.processMethodBulk(Refund.class, "all", paymentId, useCache);
+        return this.processMethodBulk("all", paymentId, useCache);
     }
 
     @POST(path="/v1/payments/:payment_id/refunds")

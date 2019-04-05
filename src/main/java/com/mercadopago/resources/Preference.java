@@ -272,7 +272,7 @@ public class Preference extends MPBase {
 
     @GET(path="/checkout/preferences/:id")
     public  Preference findById(String id, Boolean useCache) throws MPException {
-        return Preference.processMethod(Preference.class, "findById", id, useCache);
+        return this.processMethod("findById", id, useCache);
     }
 
     @POST(path="/checkout/preferences")
