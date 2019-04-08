@@ -19,14 +19,116 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Mercado Pago SDK
- * This resource allows you to create, modify or read payments
- * <p>
- * Created by Eduardo Paoletta on 12/2/16.
+ * {
+ *         "application_id": "4422991580014613",
+ *
+ *         "disbursements": [
+ *         {
+ *             "amount": 200.12,
+ *                 "external_reference": "",
+ *                 "collector_id": 328310637,
+ *                 "application_fee": 20.0,
+ *                 "money_release_days": 3,
+ *                 "additional_info": {
+ *             "items": [
+ *             {
+ *                 "id": "item-ID-1234",
+ *                     "title": "Title of what you are paying for",
+ *                     "picture_url": "https://www.mercadopago.com/logomp3.gif",
+ *                     "description": "Item description",
+ *                     "category_id": "art",
+ *                     "quantity": 1,
+ *                     "unit_price": 100
+ *             }
+ *                     ],
+ *             "shipments": {
+ *                 "receiver_address": {
+ *                     "zip_code": "5700",
+ *                             "street_name": "Street",
+ *                             "street_number": 123,
+ *                             "floor": 4,
+ *                             "apartment": "C"
+ *                 }
+ *             }
+ *         }
+ *         },
+ *         {
+ *             "amount": 300,
+ *                 "external_reference": "",
+ *                 "collector_id": 328310458,
+ *                 "application_fee": 30.0,
+ *                 "money_release_days": 3,
+ *                 "additional_info": {
+ *             "items": [
+ *             {
+ *                 "id": "item-ID-1234",
+ *                     "title": "Title of what you are paying for",
+ *                     "picture_url": "https://www.mercadopago.com/logomp3.gif",
+ *                     "description": "Item description",
+ *                     "category_id": "art",
+ *                     "quantity": 1,
+ *                     "unit_price": 100
+ *             }
+ *                     ],
+ *             "shipments": {
+ *                 "receiver_address": {
+ *                     "zip_code": "5700",
+ *                             "street_name": "Street",
+ *                             "street_number": 123,
+ *                             "floor": 4,
+ *                             "apartment": "C"
+ *                 }
+ *             }
+ *         }
+ *         }
+ *             ],
+ *         "payer": {
+ *         "id": 41234,
+ *                 "email": "test_user_p@testuser.com",
+ *                 "first_name": "Amanda",
+ *                 "last_name": "Martins",
+ *                 "address": {
+ *             "zip_code": "X5000",
+ *                     "street_name": "Calle",
+ *                     "street_numer": "120"
+ *         },
+ *         "identification": {
+ *             "type": "CPF",
+ *                     "number": "33672209"
+ *         }
+ *     },
+ *         "external_reference": "externalRootRef",
+ *             "description": "",
+ *             "binary_mode": false,
+ *             "metadata": {},
+ *         "additional_info": {
+ *         "items": [
+ *         {
+ *             "id": "item-ID-1234",
+ *                 "title": "Title of what you are paying for",
+ *                 "picture_url": "https://www.mercadopago.com/logomp3.gif",
+ *                 "description": "Item description",
+ *                 "category_id": "art",
+ *                 "quantity": 1,
+ *                 "unit_price": 100
+ *         }
+ *                 ],
+ *         "shipments": {
+ *             "receiver_address": {
+ *                 "zip_code": "5700",
+ *                         "street_name": "Street",
+ *                         "street_number": 123,
+ *                         "floor": 4,
+ *                         "apartment": "C"
+ *             }
+ *         }
+ *     }
+ *     }'
  */
-
 @Idempotent
-public class Payment extends MPBase {
+public class AdvancedPayment extends MPBase {
+
+
 
     private String id = null;
     private Date dateCreated = null;
@@ -119,10 +221,10 @@ public class Payment extends MPBase {
     private ArrayList<Refund> refunds = null;
     private AdditionalInfo additionalInfo = null;
     private String callbackUrl = null;
-    private Integer sponsorId = null;
-    private String processingMode = null;
-    private String merchantAccountId = null;
-    private Date dateOfExpiration = null;
+    private Integer sponsorId=null;
+    private String processingMode=null;
+    private String merchantAccountId=null;
+
 
     public String getId() {
         return id;
@@ -160,7 +262,7 @@ public class Payment extends MPBase {
         return payer;
     }
 
-    public Payment setPayer(Payer payer) {
+    public AdvancedPayment setPayer(Payer payer) {
         this.payer = payer;
         return this;
     }
@@ -169,7 +271,7 @@ public class Payment extends MPBase {
         return binaryMode;
     }
 
-    public Payment setBinaryMode(Boolean binaryMode) {
+    public AdvancedPayment setBinaryMode(Boolean binaryMode) {
         this.binaryMode = binaryMode;
         return this;
     }
@@ -182,7 +284,7 @@ public class Payment extends MPBase {
         return order;
     }
 
-    public Payment setOrder(Order order) {
+    public AdvancedPayment setOrder(Order order) {
         this.order = order;
         return this;
     }
@@ -191,7 +293,7 @@ public class Payment extends MPBase {
         return externalReference;
     }
 
-    public Payment setExternalReference(String externalReference) {
+    public AdvancedPayment setExternalReference(String externalReference) {
         this.externalReference = externalReference;
         return this;
     }
@@ -200,7 +302,7 @@ public class Payment extends MPBase {
         return description;
     }
 
-    public Payment setDescription(String description) {
+    public AdvancedPayment setDescription(String description) {
         this.description = description;
         return this;
     }
@@ -209,7 +311,7 @@ public class Payment extends MPBase {
         return metadata;
     }
 
-    public Payment setMetadata(JsonObject metadata) {
+    public AdvancedPayment setMetadata(JsonObject metadata) {
         this.metadata = metadata;
         return this;
     }
@@ -222,7 +324,7 @@ public class Payment extends MPBase {
         return transactionAmount;
     }
 
-    public Payment setTransactionAmount(Float transactionAmount) {
+    public AdvancedPayment setTransactionAmount(Float transactionAmount) {
         this.transactionAmount = transactionAmount;
         return this;
     }
@@ -235,17 +337,17 @@ public class Payment extends MPBase {
         return couponAmount;
     }
 
-    public Payment setCouponAmount(Float couponAmount) {
+    public AdvancedPayment setCouponAmount(Float couponAmount) {
         this.couponAmount = couponAmount;
         return this;
     }
 
-    public Payment setCampaignId(Integer campaignId) {
+    public AdvancedPayment setCampaignId(Integer campaignId) {
         this.campaignId = campaignId;
         return this;
     }
 
-    public Payment setCouponCode(String couponCode) {
+    public AdvancedPayment setCouponCode(String couponCode) {
         this.couponCode = couponCode;
         return this;
     }
@@ -254,7 +356,7 @@ public class Payment extends MPBase {
         return transactionDetails;
     }
 
-    public Payment setTransactionDetails(TransactionDetails transactionDetails) {
+    public AdvancedPayment setTransactionDetails(TransactionDetails transactionDetails) {
         this.transactionDetails = transactionDetails;
         return this;
     }
@@ -267,12 +369,12 @@ public class Payment extends MPBase {
         return differentialPricingId;
     }
 
-    public Payment setDifferentialPricingId(Integer differentialPricingId) {
+    public AdvancedPayment setDifferentialPricingId(Integer differentialPricingId) {
         this.differentialPricingId = differentialPricingId;
         return this;
     }
 
-    public Payment setApplicationFee(Float applicationFee) {
+    public AdvancedPayment setApplicationFee(Float applicationFee) {
         this.applicationFee = applicationFee;
         return this;
     }
@@ -281,7 +383,7 @@ public class Payment extends MPBase {
         return status;
     }
 
-    public Payment setStatus(Status status) {
+    public AdvancedPayment setStatus(Status status) {
         this.status = status;
         return this;
     }
@@ -290,7 +392,7 @@ public class Payment extends MPBase {
         return statusDetail;
     }
 
-    public Payment setCapture(Boolean capture) {
+    public AdvancedPayment setCapture(Boolean capture) {
         this.capture = capture;
         return this;
     }
@@ -307,7 +409,7 @@ public class Payment extends MPBase {
         return paymentMethodId;
     }
 
-    public Payment setPaymentMethodId(String paymentMethodId) {
+    public AdvancedPayment setPaymentMethodId(String paymentMethodId) {
         this.paymentMethodId = paymentMethodId;
         return this;
     }
@@ -316,7 +418,7 @@ public class Payment extends MPBase {
         return issuerId;
     }
 
-    public Payment setIssuerId(String issuerId) {
+    public AdvancedPayment setIssuerId(String issuerId) {
         this.issuerId = issuerId;
         return this;
     }
@@ -325,7 +427,7 @@ public class Payment extends MPBase {
         return paymentTypeId;
     }
 
-    public Payment setToken(String token) {
+    public AdvancedPayment setToken(String token) {
         this.token = token;
         return this;
     }
@@ -338,7 +440,7 @@ public class Payment extends MPBase {
         return statementDescriptor;
     }
 
-    public Payment setStatementDescriptor(String statementDescriptor) {
+    public AdvancedPayment setStatementDescriptor(String statementDescriptor) {
         this.statementDescriptor = statementDescriptor;
         return this;
     }
@@ -347,7 +449,7 @@ public class Payment extends MPBase {
         return installments;
     }
 
-    public Payment setInstallments(Integer installments) {
+    public AdvancedPayment setInstallments(Integer installments) {
         this.installments = installments;
         return this;
     }
@@ -356,7 +458,7 @@ public class Payment extends MPBase {
         return notificationUrl;
     }
 
-    public Payment setNotificationUrl(String notificationUrl) {
+    public AdvancedPayment setNotificationUrl(String notificationUrl) {
         this.notificationUrl = notificationUrl;
         return this;
     }
@@ -365,7 +467,7 @@ public class Payment extends MPBase {
         return sponsorId;
     }
 
-    public Payment setSponsorId(Integer sponsorId) {
+    public AdvancedPayment setSponsorId(Integer sponsorId) {
         this.sponsorId = sponsorId;
         return this;
     }
@@ -374,17 +476,8 @@ public class Payment extends MPBase {
         return processingMode;
     }
 
-    public Payment setProcessingMode(String processingMode) {
+    public AdvancedPayment setProcessingMode(String processingMode) {
         this.processingMode = processingMode;
-        return this;
-    }
-
-    public Date getDateOfExpiration() {
-        return dateOfExpiration;
-    }
-
-    public Payment setDateOfExpiration(Date dateOfExpiration) {
-        this.dateOfExpiration = dateOfExpiration;
         return this;
     }
 
@@ -392,7 +485,7 @@ public class Payment extends MPBase {
         return refunds;
     }
 
-    public Payment setAdditionalInfo(AdditionalInfo additionalInfo) {
+    public AdvancedPayment setAdditionalInfo(AdditionalInfo additionalInfo) {
         this.additionalInfo = additionalInfo;
         return this;
     }
@@ -413,7 +506,7 @@ public class Payment extends MPBase {
         this.callbackUrl = callbackUrl;
     }
 
-    public Payment findById(String id) throws MPException {
+    public AdvancedPayment findById(String id) throws MPException {
         return findById(id, WITHOUT_CACHE);
     }
 
@@ -426,17 +519,17 @@ public class Payment extends MPBase {
     }
 
     @GET(path = "/v1/payments/:id")
-    public Payment findById(String id, Boolean useCache) throws MPException {
+    public AdvancedPayment findById(String id, Boolean useCache) throws MPException {
         return this.processMethod("findById", id, useCache);
     }
 
     @POST(path = "/v1/payments")
-    public Payment save() throws MPException {
+    public AdvancedPayment save() throws MPException {
         return super.processMethod("save", WITHOUT_CACHE);
     }
 
     @PUT(path = "/v1/payments/:id")
-    public Payment update() throws MPException {
+    public AdvancedPayment update() throws MPException {
         return super.processMethod("update", WITHOUT_CACHE);
     }
 
@@ -447,7 +540,7 @@ public class Payment extends MPBase {
     }
 
 
-    public Payment refund() throws MPException {
+    public AdvancedPayment refund() throws MPException {
         // Create a refund
         Refund refund = new Refund();
         refund.setAccessToken(this.getAccessToken());
@@ -456,7 +549,7 @@ public class Payment extends MPBase {
         // If refund has been successfully created then update the instance values
 
         if (refund.getId() != null) {
-            Payment payment = this.findById(this.getId()); // Get updated payment instance
+            AdvancedPayment payment = this.findById(this.getId()); // Get updated payment instance
             this.status = payment.getStatus();
             this.refunds = payment.getRefunds();
             this.transactionAmountRefunded = payment.getTransactionAmountRefunded();
