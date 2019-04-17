@@ -191,7 +191,7 @@ public class Card extends MPBase {
         JsonObject payload = new JsonObject();
         payload.addProperty("card_id", cardId);
         String path = parsePath("/v1/card_tokens", null, this);
-        MPApiResponse response = callApi(HttpMethod.POST, path, PayloadType.JSON, payload, null, 0, 0, 0, false);
+        MPApiResponse response = callApi(this,HttpMethod.POST, path, PayloadType.JSON, payload, null, 0, 0, 0, false);
         return response.getJsonElementResponse().getAsJsonObject().get("id").getAsString();
     }
 

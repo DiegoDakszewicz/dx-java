@@ -13,10 +13,13 @@ import com.google.gson.reflect.TypeToken;
 import com.mercadopago.MercadoPago;
 import com.mercadopago.core.annotations.idempotent.Idempotent;
 import com.mercadopago.core.annotations.rest.*;
+import com.mercadopago.core.credentials.CustomCredentials;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.net.HttpMethod;
 import com.mercadopago.net.MPRestClient;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
@@ -36,7 +39,9 @@ import java.util.*;
  */
 public abstract class MPBase {
 
-    private transient static final List<String> ALLOWED_METHODS = Arrays.asList("findById", "save", "update", "delete");
+
+
+    private transient static final List<String> ALLOWED_METHODS = Arrays.asList("get","findById", "save", "update", "delete");
     private transient static final List<String> ALLOWED_BULK_METHODS = Arrays.asList("all", "search");
     private transient static final List<String> METHODS_TO_VALIDATE = Arrays.asList("save", "update");
 
@@ -48,9 +53,10 @@ public abstract class MPBase {
     private transient String idempotenceKey = null;
     protected transient MPApiResponse lastApiResponse;
 
-    private transient String marketplaceAccessToken = null;
 
     private transient String accessToken = null;
+
+    private transient CustomCredentials credential = null;
 
     private transient Map<String, String> queryParams = new HashMap<>();
 
@@ -95,20 +101,20 @@ public abstract class MPBase {
      */
     protected <T extends MPBase> T processMethod(String methodName, Boolean useCache) throws MPException {
         HashMap<String, String> mapParams = null;
-        return this.processMethod(methodName, mapParams,useCache);
+        return this.processMethod(methodName, mapParams, useCache);
     }
 
-    protected <T extends MPBase> T processMethod(String methodName,String param1, Boolean useCache) throws MPException {
+    protected <T extends MPBase> T processMethod(String methodName, String param1, Boolean useCache) throws MPException {
         HashMap<String, String> mapParams = new HashMap<>();
         mapParams.put("param1", param1);
-        return this.processMethod(methodName, mapParams,useCache);
+        return this.processMethod(methodName, mapParams, useCache);
     }
 
-    protected <T extends MPBase> T processMethod(String methodName,String param1,String param2, Boolean useCache) throws MPException {
+    protected <T extends MPBase> T processMethod(String methodName, String param1, String param2, Boolean useCache) throws MPException {
         HashMap<String, String> mapParams = new HashMap<>();
         mapParams.put("param1", param1);
-        mapParams.put("param2",param2);
-        return this.processMethod(methodName, mapParams,useCache);
+        mapParams.put("param2", param2);
+        return this.processMethod(methodName, mapParams, useCache);
     }
 
 
@@ -201,7 +207,7 @@ public abstract class MPBase {
             colHeaders.add(new BasicHeader("x-idempotency-key", resource.getIdempotenceKey()));
         }
 
-        MPApiResponse response = callApi(httpMethod, path, payloadType, payload, colHeaders, retries, connectionTimeout, socketTimeout, useCache);
+        MPApiResponse response = callApi(resource, httpMethod, path, payloadType, payload, colHeaders, retries, connectionTimeout, socketTimeout, useCache);
 
         if (response.getStatusCode() >= 200 &&
                 response.getStatusCode() < 300) {
@@ -217,29 +223,29 @@ public abstract class MPBase {
         return resource;
     }
 
-    protected <T extends MPBase>  MPResourceArray processMethodBulk(String methodName, Boolean useCache) throws MPException {
-        return processMethodBulk(this.getClass(),this, methodName,useCache);
+    protected <T extends MPBase> MPResourceArray processMethodBulk(String methodName, Boolean useCache) throws MPException {
+        return processMethodBulk(this.getClass(), this, methodName, useCache);
     }
 
-    protected <T extends MPBase>  MPResourceArray processMethodBulk(String methodName,HashMap<String, String> mapParams, Boolean useCache) throws MPException {
-        return processMethodBulk(this.getClass(),this, methodName, mapParams, useCache);
+    protected <T extends MPBase> MPResourceArray processMethodBulk(String methodName, HashMap<String, String> mapParams, Boolean useCache) throws MPException {
+        return processMethodBulk(this.getClass(), this, methodName, mapParams, useCache);
     }
 
-    protected <T extends MPBase>  MPResourceArray processMethodBulk(String methodName,String param1, Boolean useCache) throws MPException {
+    protected <T extends MPBase> MPResourceArray processMethodBulk(String methodName, String param1, Boolean useCache) throws MPException {
         HashMap<String, String> mapParams = new HashMap<String, String>();
         mapParams.put("param1", param1);
-        return processMethodBulk(this.getClass(),this, methodName, mapParams, useCache);
+        return processMethodBulk(this.getClass(), this, methodName, mapParams, useCache);
     }
 
-    protected <T extends MPBase>  MPResourceArray processMethodBulk(String methodName,String param1,String param2, Boolean useCache) throws MPException {
+    protected <T extends MPBase> MPResourceArray processMethodBulk(String methodName, String param1, String param2, Boolean useCache) throws MPException {
         HashMap<String, String> mapParams = new HashMap<String, String>();
         mapParams.put("param1", param1);
         mapParams.put("param2", param2);
-        return processMethodBulk(this.getClass(),this, methodName, mapParams, useCache);
+        return processMethodBulk(this.getClass(), this, methodName, mapParams, useCache);
     }
 
-    protected <T extends MPBase>  MPResourceArray processMethodBulk(Class clazz,T resource, String methodName, Boolean useCache) throws MPException {
-        return processMethodBulk(clazz,resource, methodName, null, useCache);
+    protected <T extends MPBase> MPResourceArray processMethodBulk(Class clazz, T resource, String methodName, Boolean useCache) throws MPException {
+        return processMethodBulk(clazz, resource, methodName, null, useCache);
     }
 
 
@@ -254,7 +260,7 @@ public abstract class MPBase {
      */
     protected static MPResourceArray processMethodBulk(Class clazz, String methodName, Boolean useCache) throws MPException {
         HashMap<String, String> mapParams = null;
-        return processMethodBulk(clazz,null, methodName, mapParams, useCache);
+        return processMethodBulk(clazz, null, methodName, mapParams, useCache);
     }
 
     /**
@@ -270,7 +276,7 @@ public abstract class MPBase {
     protected static MPResourceArray processMethodBulk(Class clazz, String methodName, String param1, Boolean useCache) throws MPException {
         HashMap<String, String> mapParams = new HashMap<String, String>();
         mapParams.put("param1", param1);
-        return processMethodBulk(clazz,null, methodName, mapParams, useCache);
+        return processMethodBulk(clazz, null, methodName, mapParams, useCache);
     }
 
     /**
@@ -288,7 +294,7 @@ public abstract class MPBase {
         HashMap<String, String> mapParams = new HashMap<String, String>();
         mapParams.put("param1", param1);
         mapParams.put("param2", param2);
-        return processMethodBulk(clazz,null, methodName, mapParams, useCache);
+        return processMethodBulk(clazz, null, methodName, mapParams, useCache);
     }
 
     /**
@@ -301,7 +307,7 @@ public abstract class MPBase {
      * @return a resourse obj fill with the api response
      * @throws MPException
      */
-    protected static <T extends MPBase>  MPResourceArray processMethodBulk(Class clazz,T resource, String methodName, HashMap<String, String> mapParams, Boolean useCache) throws MPException {
+    protected static <T extends MPBase> MPResourceArray processMethodBulk(Class clazz, T resource, String methodName, HashMap<String, String> mapParams, Boolean useCache) throws MPException {
         //Validates the method executed
 
         if (!ALLOWED_BULK_METHODS.contains(methodName)) {
@@ -321,7 +327,7 @@ public abstract class MPBase {
         PayloadType payloadType = (PayloadType) hashAnnotation.get("payloadType");
         Collection<Header> colHeaders = getStandardHeaders();
 
-        MPApiResponse response = callApi(httpMethod, path, payloadType, null, colHeaders, retries, connectionTimeout, socketTimeout, useCache);
+        MPApiResponse response = callApi(resource, httpMethod, path, payloadType, null, colHeaders, retries, connectionTimeout, socketTimeout, useCache);
 
         MPResourceArray resourceArray = new MPResourceArray();
 
@@ -351,16 +357,16 @@ public abstract class MPBase {
      * @return
      * @throws MPException
      */
-    protected static MPApiResponse callApi(
-            HttpMethod httpMethod,
-            String path,
-            PayloadType payloadType,
-            JsonObject payload,
-            Collection<Header> colHeaders,
-            int retries,
-            int connectionTimeout,
-            int socketTimeout,
-            Boolean useCache) throws MPException {
+    protected static MPApiResponse callApi(MPBase resource,
+                                           HttpMethod httpMethod,
+                                           String path,
+                                           PayloadType payloadType,
+                                           JsonObject payload,
+                                           Collection<Header> colHeaders,
+                                           int retries,
+                                           int connectionTimeout,
+                                           int socketTimeout,
+                                           Boolean useCache) throws MPException {
 
         String cacheKey = httpMethod.toString() + "_" + path;
 
@@ -379,11 +385,31 @@ public abstract class MPBase {
                     connectionTimeout,
                     socketTimeout);
 
+            if (response.getStatusCode() == 404) {
+                if (resource.getCredential() != null && resource.getCredential().isHasRefreshToken()) {
+                    CustomCredentials customCredentials = resource.getCredential().refreshToken();
+                    resource.setCredential(customCredentials);
+                    String currentPath = customCredentials.replaceOldToken(path);
+                    response = new MPRestClient().executeRequest(
+                            httpMethod,
+                            currentPath,
+                            payloadType,
+                            payload,
+                            colHeaders,
+                            retries,
+                            connectionTimeout,
+                            socketTimeout);
+                    if (response.getStatusCode() == 404) {
+                        throw new MPException("Wrong Authentication! Please validate your account again.");
+                    }
+                }
+            }
             if (useCache) {
                 MPCache.addToCache(cacheKey, response);
             } else {
                 MPCache.removeFromCache(cacheKey);
             }
+
         }
 
         return response;
@@ -570,9 +596,12 @@ public abstract class MPBase {
         // Token
         String accessToken = null;
         if (resource != null) {
-            accessToken = resource.getAccessToken();
-            if (StringUtils.isEmpty(accessToken)) {
-                accessToken = resource.getMarketplaceAccessToken();
+            if (resource.getCredential() != null) {
+                if (StringUtils.isEmpty(resource.getCredential().getAccessToken()))
+                    throw new MPException("No access_token found");
+                accessToken = resource.getCredential().getAccessToken();
+            } else {
+                accessToken = resource.getAccessToken();
                 if (StringUtils.isEmpty(accessToken)) {
                     accessToken = MercadoPago.SDK.getAccessToken();
                 }
@@ -783,13 +812,6 @@ public abstract class MPBase {
         throw new MPException("No annotated method found");
     }
 
-    public String getMarketplaceAccessToken() {
-        return marketplaceAccessToken;
-    }
-
-    public void setMarketplaceAccessToken(String marketplaceAccessToken) {
-        this.marketplaceAccessToken = marketplaceAccessToken;
-    }
 
     public String getAccessToken() {
         return accessToken;
@@ -807,4 +829,11 @@ public abstract class MPBase {
         return queryParams;
     }
 
+    public CustomCredentials getCredential() {
+        return credential;
+    }
+
+    public void setCredential(CustomCredentials credential) {
+        this.credential = credential;
+    }
 }

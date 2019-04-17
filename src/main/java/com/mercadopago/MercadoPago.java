@@ -14,11 +14,8 @@ import com.mercadopago.exceptions.MPRestException;
 import com.mercadopago.net.HttpMethod;
 import com.mercadopago.net.MPRestClient;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
 
-import java.io.Console;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Properties;
 

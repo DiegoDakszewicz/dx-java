@@ -89,6 +89,7 @@ public class Payment extends MPBase {
         rejected,
         cancelled,
         refunded,
+        partially_refunded,
         charged_back
     }
 
@@ -464,4 +465,13 @@ public class Payment extends MPBase {
         return this;
     }
 
+    public Payment cancel() throws MPException {
+        this.setStatus(Status.cancelled);
+        return this.update();
+    }
+
+    public Payment capture() throws MPException {
+        this.setCapture(true);
+        return this.update();
+    }
 }
