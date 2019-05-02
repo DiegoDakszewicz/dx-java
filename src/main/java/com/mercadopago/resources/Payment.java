@@ -1,6 +1,7 @@
 package com.mercadopago.resources;
 
 import com.google.gson.JsonObject;
+import com.mercadopago.core.MPApiResponse;
 import com.mercadopago.core.MPBase;
 import com.mercadopago.core.MPResourceArray;
 import com.mercadopago.core.annotations.idempotent.Idempotent;
@@ -291,6 +292,11 @@ public class Payment extends MPBase {
         return statusDetail;
     }
 
+    public Payment setStatusDetail(String statusDetail) {
+        this.statusDetail = statusDetail;
+        return this;
+    }
+
     public Payment setCapture(Boolean capture) {
         this.capture = capture;
         return this;
@@ -324,6 +330,11 @@ public class Payment extends MPBase {
 
     public PaymentTypeId getPaymentTypeId() {
         return paymentTypeId;
+    }
+
+    public Payment setPaymentTypeId(PaymentTypeId paymentTypeId){
+        this.paymentTypeId=paymentTypeId;
+        return this;
     }
 
     public Payment setToken(String token) {
@@ -402,16 +413,18 @@ public class Payment extends MPBase {
         return merchantAccountId;
     }
 
-    public void setMerchantAccountId(String merchantAccountId) {
+    public Payment setMerchantAccountId(String merchantAccountId) {
         this.merchantAccountId = merchantAccountId;
+        return this;
     }
 
     public String getCallbackUrl() {
         return callbackUrl;
     }
 
-    public void setCallbackUrl(String callbackUrl) {
+    public Payment setCallbackUrl(String callbackUrl) {
         this.callbackUrl = callbackUrl;
+        return this;
     }
 
     public Payment findById(String id) throws MPException {
@@ -443,7 +456,7 @@ public class Payment extends MPBase {
 
     public MPResourceArray getPaymentMethods(Boolean useCache) throws MPException {
         PaymentMethod paymentMethod = new PaymentMethod();
-        paymentMethod.setAccessToken(this.getAccessToken());
+        paymentMethod.setCredential(this.getCredential());
         return paymentMethod.all(useCache);
     }
 
@@ -451,7 +464,7 @@ public class Payment extends MPBase {
     public Payment refund() throws MPException {
         // Create a refund
         Refund refund = new Refund();
-        refund.setAccessToken(this.getAccessToken());
+        refund.setCredential(this.getCredential());
         refund.setPaymentId(this.getId());
         refund.save();
         // If refund has been successfully created then update the instance values
@@ -473,5 +486,10 @@ public class Payment extends MPBase {
     public Payment capture() throws MPException {
         this.setCapture(true);
         return this.update();
+    }
+
+    public Payment updateApiResponse(MPApiResponse response) {
+        this.lastApiResponse = response;
+        return this;
     }
 }

@@ -13,13 +13,11 @@ import com.google.gson.reflect.TypeToken;
 import com.mercadopago.MercadoPago;
 import com.mercadopago.core.annotations.idempotent.Idempotent;
 import com.mercadopago.core.annotations.rest.*;
-import com.mercadopago.core.credentials.CustomCredentials;
+import com.mercadopago.core.credentials.Credential;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.net.HttpMethod;
 import com.mercadopago.net.MPRestClient;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
@@ -40,8 +38,7 @@ import java.util.*;
 public abstract class MPBase {
 
 
-
-    private transient static final List<String> ALLOWED_METHODS = Arrays.asList("get","findById", "save", "update", "delete");
+    private transient static final List<String> ALLOWED_METHODS = Arrays.asList("get", "findById", "save", "update", "delete");
     private transient static final List<String> ALLOWED_BULK_METHODS = Arrays.asList("all", "search");
     private transient static final List<String> METHODS_TO_VALIDATE = Arrays.asList("save", "update");
 
@@ -54,9 +51,7 @@ public abstract class MPBase {
     protected transient MPApiResponse lastApiResponse;
 
 
-    private transient String accessToken = null;
-
-    private transient CustomCredentials credential = null;
+    private transient Credential credential = null;
 
     private transient Map<String, String> queryParams = new HashMap<>();
 
@@ -387,7 +382,7 @@ public abstract class MPBase {
 
             if (response.getStatusCode() == 404) {
                 if (resource.getCredential() != null && resource.getCredential().isHasRefreshToken()) {
-                    CustomCredentials customCredentials = resource.getCredential().refreshToken();
+                    Credential customCredentials = resource.getCredential().refreshToken();
                     resource.setCredential(customCredentials);
                     String currentPath = customCredentials.replaceOldToken(path);
                     response = new MPRestClient().executeRequest(
@@ -601,10 +596,7 @@ public abstract class MPBase {
                     throw new MPException("No access_token found");
                 accessToken = resource.getCredential().getAccessToken();
             } else {
-                accessToken = resource.getAccessToken();
-                if (StringUtils.isEmpty(accessToken)) {
-                    accessToken = MercadoPago.SDK.getAccessToken();
-                }
+                accessToken = MercadoPago.SDK.getAccessToken();
             }
         } else {
             accessToken = MercadoPago.SDK.getAccessToken();
@@ -813,14 +805,6 @@ public abstract class MPBase {
     }
 
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
     public void addQueryParam(String key, String value) {
         this.queryParams.put(key, value);
     }
@@ -829,11 +813,11 @@ public abstract class MPBase {
         return queryParams;
     }
 
-    public CustomCredentials getCredential() {
+    public Credential getCredential() {
         return credential;
     }
 
-    public void setCredential(CustomCredentials credential) {
+    public void setCredential(Credential credential) {
         this.credential = credential;
     }
 }

@@ -1,10 +1,8 @@
 package com.mercadopago.core.credentials;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mercadopago.MercadoPago;
 import com.mercadopago.core.MPApiResponse;
-import com.mercadopago.core.MPBase;
 import com.mercadopago.core.MPCoreUtils;
 import com.mercadopago.core.annotations.rest.PayloadType;
 import com.mercadopago.exceptions.MPException;
@@ -20,18 +18,27 @@ import java.net.URLEncoder;
  * Mercado Pago MercadoPago
  * For Marketplace and uncoupled from Mercadopago.SDK constants
  */
-public class CustomCredentials {
+public class Credential {
 
 
-    public CustomCredentials(String clientId,String secretKey,String accessToken,String refreshToken){
+    public Credential(String clientId, String secretKey, String accessToken, String refreshToken) {
         this.setClientId(clientId);
         this.setSecretKey(secretKey);
         this.setAccessToken(accessToken);
         this.setRefreshToken(refreshToken);
     }
 
+    public Credential(String clientId, String secretKey){
+        this.setClientId(clientId);
+        this.setSecretKey(secretKey);
+    }
+
+    public Credential(String accessToken) {
+        this.setAccessToken(accessToken);
+    }
+
     public interface RefreshAccessTokenCallback {
-        void onRefresh(CustomCredentials credentials);
+        void onRefresh(Credential credentials);
     }
 
     public enum GRANT_TYPE {
@@ -42,38 +49,38 @@ public class CustomCredentials {
     /**
      * This field could be clientId for individual credentials or ApplicationId  for marketplace app
      */
-    private String clientId=null;
-    private String secretKey=null;
-    private String grantType=null;
+    private String clientId = null;
+    private String secretKey = null;
+    private String grantType = null;
 
     /**
      * Code provided from Mercadopago Connect callback to obtain our first accessToken and refreshToken
      */
-    private String code=null;
-    private String redirectUri=null;
+    private String code = null;
+    private String redirectUri = null;
 
-    private String accessToken=null;
-    private String refreshToken=null;
-    private String publicKey=null;
-    private String liveMode=null;
-    private String userId=null;
-    private String tokenType=null;
-    private Integer expiresIn=null;
-    private String scope=null;
+    private String accessToken = null;
+    private String refreshToken = null;
+    private String publicKey = null;
+    private String liveMode = null;
+    private String userId = null;
+    private String tokenType = null;
+    private Integer expiresIn = null;
+    private String scope = null;
     /**
      * Set it when accessToken fails and refreshToken mechanism is called
      */
-    private String oldAccessToken=null;
+    private String oldAccessToken = null;
 
-    private MPApiResponse lastResponse=null;
+    private MPApiResponse lastResponse = null;
 
-    private RefreshAccessTokenCallback refreshAccessTokenCallback=null;
+    private RefreshAccessTokenCallback refreshAccessTokenCallback = null;
 
     public String getClientId() {
         return clientId;
     }
 
-    public CustomCredentials setClientId(String clientId) {
+    public Credential setClientId(String clientId) {
         this.clientId = clientId;
         return this;
     }
@@ -82,7 +89,7 @@ public class CustomCredentials {
         return secretKey;
     }
 
-    public CustomCredentials setSecretKey(String secretKey) {
+    public Credential setSecretKey(String secretKey) {
         this.secretKey = secretKey;
         return this;
     }
@@ -91,7 +98,7 @@ public class CustomCredentials {
         return accessToken;
     }
 
-    public CustomCredentials setAccessToken(String accessToken) {
+    public Credential setAccessToken(String accessToken) {
         this.accessToken = accessToken;
         return this;
     }
@@ -100,7 +107,7 @@ public class CustomCredentials {
         return refreshToken;
     }
 
-    public CustomCredentials setRefreshToken(String refreshToken) {
+    public Credential setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
         return this;
     }
@@ -109,7 +116,7 @@ public class CustomCredentials {
         return liveMode;
     }
 
-    public CustomCredentials setLiveMode(String liveMode) {
+    public Credential setLiveMode(String liveMode) {
         this.liveMode = liveMode;
         return this;
     }
@@ -118,7 +125,7 @@ public class CustomCredentials {
         return userId;
     }
 
-    public CustomCredentials setUserId(String userId) {
+    public Credential setUserId(String userId) {
         this.userId = userId;
         return this;
     }
@@ -127,7 +134,7 @@ public class CustomCredentials {
         return tokenType;
     }
 
-    public CustomCredentials setTokenType(String tokenType) {
+    public Credential setTokenType(String tokenType) {
         this.tokenType = tokenType;
         return this;
     }
@@ -136,7 +143,7 @@ public class CustomCredentials {
         return expiresIn;
     }
 
-    public CustomCredentials setExpiresIn(Integer expiresIn) {
+    public Credential setExpiresIn(Integer expiresIn) {
         this.expiresIn = expiresIn;
         return this;
     }
@@ -145,7 +152,7 @@ public class CustomCredentials {
         return scope;
     }
 
-    public CustomCredentials setScope(String scope) {
+    public Credential setScope(String scope) {
         this.scope = scope;
         return this;
     }
@@ -155,7 +162,7 @@ public class CustomCredentials {
         return grantType;
     }
 
-    public CustomCredentials setGrantType(String grantType) {
+    public Credential setGrantType(String grantType) {
         this.grantType = grantType;
         return this;
     }
@@ -164,7 +171,7 @@ public class CustomCredentials {
         return code;
     }
 
-    public CustomCredentials setCode(String code) {
+    public Credential setCode(String code) {
         this.code = code;
         return this;
     }
@@ -177,7 +184,7 @@ public class CustomCredentials {
         return redirectUri;
     }
 
-    public CustomCredentials setRedirectUri(String redirectUri) {
+    public Credential setRedirectUri(String redirectUri) {
         this.redirectUri = redirectUri;
         return this;
     }
@@ -186,7 +193,7 @@ public class CustomCredentials {
         return oldAccessToken;
     }
 
-    public CustomCredentials setOldAccessToken(String oldAccessToken) {
+    public Credential setOldAccessToken(String oldAccessToken) {
         this.oldAccessToken = oldAccessToken;
         return this;
     }
@@ -203,13 +210,13 @@ public class CustomCredentials {
         return publicKey;
     }
 
-    public CustomCredentials setPublicKey(String publicKey) {
+    public Credential setPublicKey(String publicKey) {
         this.publicKey = publicKey;
         return this;
     }
 
     public boolean isHasRefreshToken() {
-return StringUtils.isNotEmpty(this.getRefreshToken());
+        return StringUtils.isNotEmpty(this.getRefreshToken());
     }
 
     public String getMercadopagoConnectUri(String callback) {
@@ -220,16 +227,16 @@ return StringUtils.isNotEmpty(this.getRefreshToken());
         }
     }
 
-    public CustomCredentials authenticate() throws MPRestException {
+    public Credential authenticate() throws MPRestException {
         JsonObject jsonPayload = new JsonObject();
         jsonPayload.addProperty("client_id", getClientId());
         jsonPayload.addProperty("client_secret", getSecretKey());
         if (StringUtils.isNotEmpty(this.getCode())) {
-            jsonPayload.addProperty("grant_type", GRANT_TYPE.client_credentials.name());
-            jsonPayload.addProperty("code", this.getCode());
-            jsonPayload.addProperty("redirect_uri",this.getRedirectUri());
-        } else {
             jsonPayload.addProperty("grant_type", GRANT_TYPE.authorization_code.name());
+            jsonPayload.addProperty("code", this.getCode());
+            jsonPayload.addProperty("redirect_uri", this.getRedirectUri());
+        } else {
+            jsonPayload.addProperty("grant_type", GRANT_TYPE.client_credentials.name());
         }
         String baseUri = MercadoPago.SDK.getBaseUrl();
         lastResponse = new MPRestClient().executeRequest(
@@ -238,7 +245,7 @@ return StringUtils.isNotEmpty(this.getRefreshToken());
                 PayloadType.JSON,
                 jsonPayload,
                 null);
-        CustomCredentials result = this;
+        Credential result = this;
         if (lastResponse.getJsonElementResponse() != null &&
                 lastResponse.getJsonElementResponse().isJsonObject()) {
             result = MPCoreUtils.getResourceFromJson(this.getClass(), lastResponse.getJsonElementResponse().getAsJsonObject());
@@ -247,15 +254,15 @@ return StringUtils.isNotEmpty(this.getRefreshToken());
         return result;
     }
 
-    public CustomCredentials refreshToken() throws MPException {
+    public Credential refreshToken() throws MPException {
         JsonObject jsonPayload = new JsonObject();
-        if (StringUtils.isNotEmpty(this.getRefreshToken())){
+        if (StringUtils.isNotEmpty(this.getRefreshToken())) {
             jsonPayload.addProperty("client_id", getClientId());
             jsonPayload.addProperty("client_secret", getSecretKey());
             jsonPayload.addProperty("grant_type", GRANT_TYPE.refresh_token.name());
             jsonPayload.addProperty("refresh_token", this.getRefreshToken());
         } else {
-           throw new MPException("Refresh Token not set");
+            throw new MPException("Refresh Token not set");
         }
         String baseUri = MercadoPago.SDK.getBaseUrl();
         lastResponse = new MPRestClient().executeRequest(
@@ -264,21 +271,21 @@ return StringUtils.isNotEmpty(this.getRefreshToken());
                 PayloadType.JSON,
                 jsonPayload,
                 null);
-        CustomCredentials result=this;
+        Credential result = this;
         if (lastResponse.getJsonElementResponse() != null &&
                 lastResponse.getJsonElementResponse().isJsonObject()) {
             result = MPCoreUtils.getResourceFromJson(this.getClass(), lastResponse.getJsonElementResponse().getAsJsonObject());
             result.setOldAccessToken(this.getAccessToken());
             this.getRefreshAccessTokenCallback().onRefresh(result);
             result.lastResponse = lastResponse;
-        }else{
+        } else {
             throw new MPException("Refresh token is invalid! Please validate your account again!");
         }
         return result;
     }
 
-    public String replaceOldToken(String path){
-        return path.replace(this.getOldAccessToken(),this.getAccessToken());
+    public String replaceOldToken(String path) {
+        return path.replace(this.getOldAccessToken(), this.getAccessToken());
     }
 
 }

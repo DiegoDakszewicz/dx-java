@@ -41,7 +41,7 @@ public class UserInfo extends MPBase {
     }
 
     @GET(path = "/users/me")
-    public UserInfo getMe() throws MPException {
+    public UserInfo get() throws MPException {
         return this.processMethod("get",false);
     }
 }

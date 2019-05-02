@@ -3,7 +3,6 @@ package com.mercadopago.resources.datastructures.payment;
 import com.mercadopago.core.MPBase;
 import com.mercadopago.core.annotations.rest.PUT;
 import com.mercadopago.exceptions.MPException;
-import com.mercadopago.resources.AdvancedPayment;
 
 import java.util.Date;
 
@@ -43,13 +42,13 @@ import java.util.Date;
 public class Disbursement extends MPBase{
 
     private String id = null;
-    private transient String paymentId;
     private Float amount = null;
     private String externalReference = null;
     private Integer collectorId = null;
     private Float applicationFee = null;
-    private Date moneyReleaseDate = null;
+    private Integer moneyReleaseDays = null;
     private AdditionalInfo additionalInfo=null;
+    private transient String paymentId;
 
     public String getId() {
         return id;
@@ -106,12 +105,12 @@ public class Disbursement extends MPBase{
         return this;
     }
 
-    public Date getMoneyReleaseDate() {
-        return moneyReleaseDate;
+    public Integer getMoneyReleaseDays() {
+        return moneyReleaseDays;
     }
 
-    public Disbursement setMoneyReleaseDate(Date moneyReleaseDate) {
-        this.moneyReleaseDate = moneyReleaseDate;
+    public Disbursement setMoneyReleaseDays(Integer moneyReleaseDays) {
+        this.moneyReleaseDays = moneyReleaseDays;
         return this;
     }
 
