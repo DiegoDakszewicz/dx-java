@@ -38,7 +38,7 @@ import java.util.*;
 public abstract class MPBase {
 
 
-    private transient static final List<String> ALLOWED_METHODS = Arrays.asList("get", "findById", "save", "update", "delete");
+    private transient static final List<String> ALLOWED_METHODS = Arrays.asList("get", "findById", "save", "update", "delete","balance");
     private transient static final List<String> ALLOWED_BULK_METHODS = Arrays.asList("all", "search");
     private transient static final List<String> METHODS_TO_VALIDATE = Arrays.asList("save", "update");
 

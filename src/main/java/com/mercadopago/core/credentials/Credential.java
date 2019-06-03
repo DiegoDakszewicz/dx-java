@@ -28,7 +28,7 @@ public class Credential {
         this.setRefreshToken(refreshToken);
     }
 
-    public Credential(String clientId, String secretKey){
+    public Credential(String clientId, String secretKey) {
         this.setClientId(clientId);
         this.setSecretKey(secretKey);
     }
@@ -273,7 +273,7 @@ public class Credential {
                 null);
         Credential result = this;
         if (lastResponse.getJsonElementResponse() != null &&
-                lastResponse.getJsonElementResponse().isJsonObject()) {
+                lastResponse.getJsonElementResponse().isJsonObject() && this.getRefreshAccessTokenCallback() != null) {
             result = MPCoreUtils.getResourceFromJson(this.getClass(), lastResponse.getJsonElementResponse().getAsJsonObject());
             result.setOldAccessToken(this.getAccessToken());
             this.getRefreshAccessTokenCallback().onRefresh(result);

@@ -317,21 +317,19 @@ public class AdvancedCart extends MPBase {
     }
 
 
-    public AdvancedCart refund() throws MPException {
+    public AdvancedPaymentRefund refund() throws MPException {
         AdvancedPaymentRefund refund = new AdvancedPaymentRefund();
-        refund.setPaymentId(this.getId());
+        refund.setId(this.getId());
         refund.setCredential(this.getCredential());
-        refund.save();
-        return this.findById(this.getId(), false);
+        return refund.save();
     }
 
-    public AdvancedCart refundDisbursement(String disbursement) throws MPException {
+    public AdvancedDisbursementRefund refundDisbursement(String disbursement) throws MPException {
         AdvancedDisbursementRefund refund = new AdvancedDisbursementRefund();
         refund.setPaymentId(this.getId());
         refund.setCredential(this.getCredential());
         refund.setDisbursementId(disbursement);
-        refund.save();
-        return this.findById(this.getId(), false);
+        return refund.save();
     }
 
 }

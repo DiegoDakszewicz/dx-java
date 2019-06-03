@@ -6,16 +6,18 @@ import com.mercadopago.exceptions.MPException;
 
 public class AdvancedPaymentRefund extends MPBase {
 
-    private transient String paymentId = null;
+    private transient Float amount = null;
 
-    private  transient Float amount = null;
+    private String id;
 
-    public String getPaymentId() {
-        return paymentId;
+    private String status;
+
+    public String getId() {
+        return id;
     }
 
-    public AdvancedPaymentRefund setPaymentId(String paymentId) {
-        this.paymentId = paymentId;
+    public AdvancedPaymentRefund setId(String paymentId) {
+        this.id = paymentId;
         return this;
     }
 
@@ -28,8 +30,16 @@ public class AdvancedPaymentRefund extends MPBase {
         return this;
     }
 
+    public String getStatus() {
+        return status;
+    }
 
-    @POST(path="v1/advanced_payments/:payment_id/refunds")
+    public AdvancedPaymentRefund setStatus(String status) {
+        this.status = status;
+        return this;
+    }
+
+    @POST(path = "/v1/advanced_payments/:id/refunds")
     public AdvancedPaymentRefund save() throws MPException {
         return super.processMethod("save", WITHOUT_CACHE);
     }
